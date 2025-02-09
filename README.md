@@ -1,85 +1,64 @@
-# AI Resume Builder
+# 🚀 ElevateCV - AI Resume Builder
 
-### ❤️ Support
-
-If you find this project helpful, please consider giving this repository a ⭐️ on GitHub, and don't forget to **like**, **share**, and **subscribe** to support our journey!
-
-## 📌 Project Overview
-
-Welcome to the **AI Resume Builder** repository! This project leverages cutting-edge tools and frameworks to create a dynamic and efficient resume-building platform powered by AI. The AI Resume Builder provides a seamless experience, making resume creation straightforward and effective.
-
-## 🌟 Features
-
-- 🔐 **Authentication with Kinde** - Google Sign-In
-- ➕ **Creating Resumes**
-- ✏️ **Editing Resumes**
-- 🎨 **Resume Theme Colors**
-- 📸 **Resume Thumbnail**
-- 🗨️ **Shareable Resume Link**
-- 🔎 **Search Trash Resume**
-- 📡 **Real-Time Editing**
-- 🔗 **Preview Mode**
-- 👨‍💻 **Download Resume to PDF Format**
-- 🤖 **Resume Generation with AI**
-- 🌐 **Built with Next.js 14**
-- 🎨 **Styled with TailwindCSS and Shadcn UI**
-- 🪝 **Hono API & Tanstack React Query**
-- 💾 **Vercel PostgreSQL & Drizzle ORM**
-- 🚀 **Deployed on Vercel**
-
-## 🚀 Tools & Technologies
-
-This project is built using:
-
-- **Next.js**: For the fast, SEO-friendly frontend.
-- **Hono**: Lightweight framework for building backend APIs.
-- **Drizzle ORM**: SQL ORM for easy database management.
-- **Gemini AI**: Integrating AI capabilities for building smarter resumes.
-- **Tailwind CSS**: Rapid, responsive styling.
-- **React Query**: For efficient data fetching and caching.
-- **Vercel Postgres**: Reliable, scalable database solution.
-
-## 🔄 Deploy to Vercel
-
-To deploy this project to Vercel, follow these steps:
-
-### 1. Add Environment Variables
-
-After deploying, navigate to **Vercel > Project Settings > Environment Variables** and add the necessary environment variables for production.
-
-Replace all occurrences of `localhost` with your Vercel domain URL, as shown below:
-
-```plaintext
-KINDE_SITE_URL=https://cvbuild-ai.vercel.app/
-KINDE_POST_LOGOUT_REDIRECT_URL=https://cvbuild-ai.vercel.app/
-KINDE_POST_LOGIN_REDIRECT_URL=https://cvbuild-ai.vercel.app/dashboard
-NEXT_PUBLIC_APP_URL=https://cvbuild-ai.vercel.app/
-```
-
-These variables ensure that the app functions properly on your Vercel deployment.
-
-### 2. Initialize and Deploy
-
-Run the following command to initialize the deployment:
-
-```bash
-vercel
-```
-
-This command will prompt you to configure the project for the first time if it hasn't been linked to Vercel.
-
-Once configured, deploy the project to production using:
-
-```bash
-vercel --prod
-```
-
-This will push your latest changes live on Vercel.
-
-## 🔍 Versions & Packages
-
-To view all packages and dependencies used, check out the [Versions](versions/version.md) file.
+Welcome to **ElevateCV**, the ultimate AI-powered resume builder! This platform combines cutting-edge technology with an intuitive interface, making resume creation effortless, professional, and impactful. Whether you're creating your first CV or enhancing an existing one, **ElevateCV** has you covered.
 
 ---
 
-Thank you for being part of this journey, and happy coding! 😊
+## 📌 Project Overview
+
+ElevateCV is designed to simplify the resume-building process by leveraging AI to generate tailored resumes while offering customization options. With seamless editing, real-time updates, and shareable links, it empowers users to create standout resumes in just a few clicks.
+
+---
+
+## 🌟 Features
+
+- 🔐 **Authentication with Kinde** - Secure login with Google Sign-In.
+- ➕ **Creating Resumes** - Start from scratch or use AI-generated templates.
+- ✏️ **Editing Resumes** - Modify content effortlessly with real-time updates.
+- 🎨 **Resume Theme Colors** - Personalize your resume with color themes.
+- 📸 **Resume Thumbnail** - Quick visual preview of your resume.
+- 🗨️ **Shareable Resume Link** - Share your resume online with ease.
+- 🔎 **Search Trash Resume** - Recover deleted resumes with a search feature.
+- 📡 **Real-Time Editing** - See updates instantly while you work.
+- 🔗 **Preview Mode** - View your resume as it will appear to others.
+- 👨‍💻 **Download Resume to PDF Format** - Get a professional-grade PDF copy.
+- 🤖 **Resume Generation with AI** - Automatically generate tailored resumes using AI.
+- 🌐 **Built with Next.js 14** - High-performance, SEO-optimized framework.
+- 🎨 **Styled with TailwindCSS and Shadcn UI** - Aesthetic and responsive design.
+- 🪝 **Hono API & Tanstack React Query** - Lightweight and efficient data handling.
+- 💾 **Vercel PostgreSQL & Drizzle ORM** - Reliable database management.
+- 🚀 **Deployed on Vercel** - Fast and scalable deployment.
+
+---
+
+## 🚀 Tools & Technologies
+
+This project is powered by:
+
+- **Next.js 14**: Ensures a fast and responsive user experience.
+- **Hono**: Lightweight backend framework for building APIs.
+- **Drizzle ORM**: Simplifies database management and queries.
+- **Gemini AI**: Drives the AI-based resume generation.
+- **TailwindCSS**: Provides fast, customizable styling options.
+- **Shadcn UI**: Ensures modern, sleek UI components.
+- **Tanstack React Query**: Efficient data fetching and state management.
+- **Vercel PostgreSQL**: Robust, scalable database hosting.
+- **Vercel**: Streamlines deployment for a global audience.
+
+---
+
+## 📂 Folder Structure
+
+- **/src**: Contains the main source code.
+- **/api**: Hono API routes for backend logic.
+- **/components**: Reusable UI components.
+- **/pages**: Next.js pages for routing.
+- **/styles**: TailwindCSS configurations and styles.
+
+---
+
+## 📜 Getting Started
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/gourabdey/elevatecv.git

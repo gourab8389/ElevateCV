@@ -12,19 +12,19 @@ import { ResumeDataType } from "@/types/resume.type";
 import { Loader, Sparkles } from "lucide-react";
 import React, { useCallback, useState } from "react";
 
-interface GeneratesSummaryType {
-  fresher: string;
-  mid: string;
-  experienced: string;
+interface SummaryType {
+  experienceLevel: string;
+  summary: string;
 }
 
 const prompt = `Job Title: {jobTitle}. Based on the job title, please generate concise 
-and complete summaries for my resume in JSON format, incorporating the following experience
-levels: fresher, mid, and experienced. Each summary should be limited to 3 to 4 lines,
-reflecting a personal tone and showcasing specific relevant programming languages, technologies,
-frameworks, and methodologies without any placeholders or gaps. Ensure that the summaries are
-engaging and tailored to highlight unique strengths, aspirations, and contributions to collaborative
-projects, demonstrating a clear understanding of the role and industry standards.`;
+and complete summaries for my resume in JSON format with an array of objects containing 
+'experienceLevel' and 'summary' fields for: fresher, mid, and experienced levels. Each summary 
+should be limited to 3 to 4 lines, reflecting a personal tone and showcasing specific relevant 
+programming languages, technologies, frameworks, and methodologies without any placeholders or gaps. 
+Ensure that the summaries are engaging and tailored to highlight unique strengths, aspirations, 
+and contributions to collaborative projects, demonstrating a clear understanding of the role and 
+industry standards.`;
 
 const SummaryForm = (props: { handleNext: () => void }) => {
   const { handleNext } = props;
@@ -33,8 +33,7 @@ const SummaryForm = (props: { handleNext: () => void }) => {
   const { mutateAsync, isPending } = useUpdateDocument();
 
   const [loading, setLoading] = useState(false);
-  const [aiGeneratedSummary, setAiGeneratedSummary] =
-    useState<GeneratesSummaryType | null>(null);
+  const [aiGeneratedSummaries, setAiGeneratedSummaries] = useState<SummaryType[]>([]);
 
   const handleChange = (e: { target: { value: string } }) => {
     const { value } = e.target;
@@ -90,8 +89,15 @@ const SummaryForm = (props: { handleNext: () => void }) => {
       const PROMPT = prompt.replace("{jobTitle}", jobTitle);
       const result = await AIChatSession.sendMessage(PROMPT);
       const responseText = await result.response.text();
-      console.log(responseText);
-      setAiGeneratedSummary(JSON?.parse(responseText));
+      const parsedResponse = JSON.parse(responseText);
+      
+      // Transform the response into the expected format
+      const summaries = Object.entries(parsedResponse).map(([level, summary]) => ({
+        experienceLevel: level,
+        summary: summary as string
+      }));
+      
+      setAiGeneratedSummaries(summaries);
     } catch (error) {
       toast({
         title: "Failed to generate summary",
@@ -111,7 +117,7 @@ const SummaryForm = (props: { handleNext: () => void }) => {
         summary: summary,
       };
       onUpdate(updatedInfo);
-      setAiGeneratedSummary(null);
+      setAiGeneratedSummaries([]);
     },
     [onUpdate, resumeInfo]
   );
@@ -131,7 +137,7 @@ const SummaryForm = (props: { handleNext: () => void }) => {
               type="button"
               className="gap-1"
               disabled={loading || isPending}
-              onClick={() => GenerateSummaryFromAI()}
+              onClick={GenerateSummaryFromAI}
             >
               <Sparkles size="15px" className="text-purple-500" />
               Generate with AI
@@ -144,42 +150,32 @@ const SummaryForm = (props: { handleNext: () => void }) => {
             onChange={handleChange}
           />
 
-          {aiGeneratedSummary && (
+          {aiGeneratedSummaries.length > 0 && (
             <div>
               <h5 className="font-semibold text-[15px] my-4">Suggestions</h5>
-              {Object?.entries(aiGeneratedSummary)?.map(
-                ([experienceType, summary], index) => (
-                  <Card
-                    role="button"
-                    key={index}
-                    className="my-4 bg-primary/5 shadow-none
-                            border-primary/30
-                          "
-                    onClick={() => handleSelect(summary)}
-                  >
-                    <CardHeader className="py-2">
-                      <CardTitle className="font-semibold text-md">
-                        {experienceType?.charAt(0)?.toUpperCase() +
-                          experienceType?.slice(1)}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="text-sm">
-                      <p>{summary}</p>
-                    </CardContent>
-                  </Card>
-                )
-              )}
+              {aiGeneratedSummaries.map((item, index) => (
+                <Card
+                  key={index}
+                  className="my-4 bg-primary/5 shadow-none border-primary/30 cursor-pointer"
+                  onClick={() => handleSelect(item.summary)}
+                >
+                  <CardHeader className="py-2">
+                    <CardTitle className="font-semibold text-md capitalize">
+                      {item.experienceLevel}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="text-sm">
+                    <p>{item.summary}</p>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           )}
 
           <Button
             className="mt-4"
             type="submit"
-            disabled={
-              isPending || loading || resumeInfo?.status === "archived"
-                ? true
-                : false
-            }
+            disabled={isPending || loading || resumeInfo?.status === "archived"}
           >
             {isPending && <Loader size="15px" className="animate-spin" />}
             Save Changes

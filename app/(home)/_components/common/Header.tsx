@@ -90,8 +90,8 @@ const Header = () => {
             <Fragment>
               {isAuthenticated && user ? (
                 <DropdownMenu>
-                  <DropdownMenuTrigger role="button">
-                    <div className="flex items-center gap-1">
+                  <DropdownMenuTrigger role="button" className="rounded-full">
+                    <div className="flex items-center">
                       <Avatar role="button" className="!cursor-pointer">
                         <AvatarImage src={user?.picture || ""} />
                         <AvatarFallback className="!cursor-pointer">
@@ -99,7 +99,6 @@ const Header = () => {
                           {user?.family_name?.[0]}
                         </AvatarFallback>
                       </Avatar>
-                      <ChevronDown size="17px" />
                     </div>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="my-3">

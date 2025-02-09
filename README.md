@@ -61,4 +61,4 @@ This project is powered by:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/gourabdey/elevatecv.git
+   git clone https://github.com/gourab8389/ElevateCV.git

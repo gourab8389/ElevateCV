@@ -1,71 +1,95 @@
 import { Button } from "@/components/ui/button";
 import { RegisterLink } from "@kinde-oss/kinde-auth-nextjs/components";
-import { ChevronRight, Video } from "lucide-react";
+import { Sparkles, PlayCircle, ArrowRight, Star, Users, FileText } from "lucide-react";
 import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="w-full">
-      <div className="hero-section w-full min-h-screen">
-        <div className="w-full flex flex-col items-center justify-center py-10 max-w-4xl mx-auto">
-          <div className="rounded-full flex items-center font- font-medium gap-1 text-sm h-auto p-2 bg-muted max-w-80">
-            <div className="p-2 h-5 shrink-0 flex items-center text-xs justify-center text-white bg-primary rounded-full">
-              New
+    <div className="w-full bg-gradient-to-b from-white to-blue-50">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 pt-8">
+          {/* Left Column */}
+          <div className="flex flex-col justify-center">
+            <div className="space-y-6">
+              <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-200">
+                <Sparkles className="w-4 h-4 text-yellow-500" />
+                <span className="text-sm font-medium">Welcome to ElevateCV</span>
+              </div>
+
+              <div className="space-y-4">
+                <h1 className="text-5xl font-bold tracking-tight">
+                  Elevate Your
+                  <span className="block mt-2 bg-gradient-to-r from-primary via-violet-500 to-blue-600 bg-clip-text text-transparent">
+                    Career Journey
+                  </span>
+                  With AI
+                </h1>
+
+                <p className="text-lg text-gray-600">
+                  ElevateCV combines the power of AI with professional design to help you create 
+                  stunning resumes that catch employers' attention.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button className="h-12 px-6 text-base font-medium gap-2 group" asChild>
+                  <RegisterLink>
+                    Create Your Resume
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </RegisterLink>
+                </Button>
+
+                <Button variant="outline" className="h-12 px-6 text-base font-medium gap-2" asChild>
+                  <a>
+                    <PlayCircle className="w-5 h-5" />
+                    See How It Works
+                  </a>
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-3 gap-6 pt-4">
+                <div className="text-center">
+                  <div className="flex justify-center">
+                    <Star className="w-6 h-6 text-yellow-500" />
+                  </div>
+                  <div className="mt-2 font-semibold">4.9/5</div>
+                  <div className="text-sm text-gray-500">User Rating</div>
+                </div>
+                <div className="text-center">
+                  <div className="flex justify-center">
+                    <Users className="w-6 h-6 text-primary" />
+                  </div>
+                  <div className="mt-2 font-semibold">10K+</div>
+                  <div className="text-sm text-gray-500">Active Users</div>
+                </div>
+                <div className="text-center">
+                  <div className="flex justify-center">
+                    <FileText className="w-6 h-6 text-green-500" />
+                  </div>
+                  <div className="mt-2 font-semibold">50K+</div>
+                  <div className="text-sm text-gray-500">Resumes Created</div>
+                </div>
+              </div>
             </div>
-            Subscribe to Techwithemma
-            <ChevronRight className="w-4 h-4" />
           </div>
 
-          <div className="flex flex-col mt-5 items-center text-center">
-            <h1 className="text-6xl font-black">
-              <p>Get dream jobs with our</p>
-              <p>
-                <span className="bg-gradient-to-r from-primary via-purple-300 to-primary bg-clip-text text-transparent animate-sparkle">
-                  AI Powered
-                </span>
-                {"  "}
-                resume builder
-              </p>
-            </h1>
-            <p className=" block text-xl mt-3 font-medium text-black/70">
-              Build a professional,resume with our free builder, and share it
-              with, shareable link.
-            </p>
-            <br />
-            <div className="flex items-center gap-2">
-              <Button className="h-12 text-base font-medium min-w-32" asChild>
-                <RegisterLink>Get Started</RegisterLink>
-              </Button>
-              <Button
-                variant="outline"
-                className="h-12  border-primary text-primary text-base font-medium min-w-32"
-                asChild
-              >
-                <a className="flex items-center gap-1">
-                  <Video size="17px" />
-                  Watch video
-                </a>
-              </Button>
-            </div>
-          </div>
-        </div>
-        <div className="w-full relative max-w-5xl mx-auto px-4 md:px-6 lg:px-8">
-          <div className="absolute top-10 left-1/2 transform -translate-x-1/2 w-full h-[400px] bg-gradient-to-r from-primary to-blue-500 rounded-full blur-3xl opacity-40 z-0" />
-          <div className="w-full h-[400px] md:h-[500px] lg:h-[600px] rounded-xl shadow-lg bg-background">
-            <div className="relative w-full h-full rounded-md">
-              <Image
-                src="/images/board-img.png"
-                alt="App dashboard"
-                fill
-                className="object-contain w-full h-full rounded-md"
-              />
+          {/* Right Column */}
+          <div className="relative rounded-xl">
+            <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-blue-500/20 rounded-3xl blur-3xl" />
+            <div className="relative bg-white rounded-2xl border border-gray-200 shadow-xl">
+              <div className="aspect-[4/3] rounded-2xl overflow-hidden">
+                <Image
+                  src="/images/board-img.png"
+                  alt="ElevateCV Dashboard Preview"
+                  fill
+                  className="object-cover rounded-xl"
+                />
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <br />
-      <br />
-      <br />
     </div>
   );
 }

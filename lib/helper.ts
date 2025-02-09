@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import html2canvas from "html2canvas";
 
-export const INITIAL_THEME_COLOR = "#7c3aed";
+export const INITIAL_THEME_COLOR = "#1E90FF";
 
 export const generateDocUUID = (): string => {
   const uuid = uuidv4().replace(/-/g, "");

@@ -1,4 +1,4 @@
-export const INITIAL_THEME_COLOR = "#7c3aed";
+export const INITIAL_THEME_COLOR = "#1E90FF";
 
 export const THEME_COLORS = [
   "#FF6F61", // Warm Coral

@@ -43,7 +43,7 @@
           "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true,
-          "default": "'#7c3aed'"
+          "default": "'#1E90FF'"
         },
         "thumbnail": {
           "name": "thumbnail",

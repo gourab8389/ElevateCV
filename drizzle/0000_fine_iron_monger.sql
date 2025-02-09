@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS "document" (
 	"user_id" varchar NOT NULL,
 	"title" varchar(255) NOT NULL,
 	"summary" text,
-	"theme_color" varchar(255) DEFAULT '#7c3aed' NOT NULL,
+	"theme_color" varchar(255) DEFAULT '#1E90FF' NOT NULL,
 	"thumbnail" text,
 	"current_position" integer DEFAULT 1 NOT NULL,
 	"status" "status" DEFAULT 'private' NOT NULL,

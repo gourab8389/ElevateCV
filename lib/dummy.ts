@@ -7,7 +7,7 @@ enum Status {
 export const resumeData = {
   title: "Untitled document",
   status: Status.private,
-  themeColor: "#7c3aed",
+  themeColor: "##1E90FF",
   currentPosition: 1,
   personalInfo: {
     firstName: "Sarah",

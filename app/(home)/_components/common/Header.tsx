@@ -15,6 +15,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
+import Logo from "@/components/shared/logo";
 
 const Header = () => {
   const { setTheme } = useTheme();
@@ -36,14 +37,7 @@ const Header = () => {
             "
         >
           <div>
-            <Link
-              href="/dashboard"
-              className="font-black text-[20px]
-                      text-primary
-                          "
-            >
-              CVbuild.ai
-            </Link>
+            <Logo/>
           </div>
 
           {isAuthenticated && user ? (

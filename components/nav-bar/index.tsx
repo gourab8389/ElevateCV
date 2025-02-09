@@ -15,21 +15,7 @@ const NavBar = () => {
         <div className="flex items-center flex-1 gap-9">
           <div>
             <Logo/>
-          </div>
-
-          <div className="hidden lg:flex">
-            <ul className="flex items-center gap-5 text-[18px] font-medium text-black dark:text-white">
-              <li>
-                <Link href="#">AI Features</Link>
-              </li>
-              <li>
-                <Link href="#">Pricing</Link>
-              </li>
-              <li>
-                <Link href="#">Resources</Link>
-              </li>
-            </ul>
-          </div>
+        </div>
         </div>
         <div className="flex items-center gap-4">
           <LoginLink>

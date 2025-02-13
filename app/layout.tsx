@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/context/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import QueryProvider from "@/context/query-provider";
+import Footer from "@/components/shared/footer";
 
 const urbanist = Urbanist({ subsets: ["latin"] });
 const open_sans = Open_Sans({
@@ -36,6 +37,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
+            <Footer/>
             <Toaster />
           </ThemeProvider>
         </QueryProvider>

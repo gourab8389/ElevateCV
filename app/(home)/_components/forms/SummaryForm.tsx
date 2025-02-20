@@ -9,7 +9,7 @@ import { toast } from "@/hooks/use-toast";
 import { AIChatSession } from "@/lib/google-ai-model";
 import { generateThumbnail } from "@/lib/helper";
 import { ResumeDataType } from "@/types/resume.type";
-import { Loader, Sparkles } from "lucide-react";
+import { AlertCircle, Loader, Sparkles } from "lucide-react";
 import React, { useCallback, useState } from "react";
 
 interface SummaryType {
@@ -17,22 +17,40 @@ interface SummaryType {
   summary: string;
 }
 
+// Fallback templates based on experience level and job title
+const getFallbackTemplates = (jobTitle: string): SummaryType[] => {
+  const titleLower = jobTitle.toLowerCase();
+  const role = titleLower.includes('developer') ? 'developer' :
+               titleLower.includes('engineer') ? 'engineer' :
+               titleLower.includes('designer') ? 'designer' :
+               'professional';
+
+  return [
+    {
+      experienceLevel: "Entry Level",
+      summary: `Recent graduate with a strong foundation in ${role} fundamentals and hands-on project experience. Passionate about learning new technologies and contributing to innovative solutions. Demonstrated ability to quickly adapt to new environments and work collaboratively in team settings. Seeking an opportunity to grow and make meaningful contributions while developing expertise in ${jobTitle}.`
+    },
+    {
+      experienceLevel: "Mid Level",
+      summary: `Experienced ${role} with 3-5 years of proven expertise in delivering high-quality solutions. Strong track record of collaborating with cross-functional teams to implement robust solutions. Proficient in industry-standard tools and methodologies, with a focus on code quality and best practices. Demonstrated ability to mentor junior team members while contributing to complex projects.`
+    },
+    {
+      experienceLevel: "Senior Level",
+      summary: `Seasoned ${role} with 5+ years of extensive experience in architecting and delivering enterprise-scale solutions. Proven leadership in driving technical initiatives, mentoring teams, and implementing best practices. Strong focus on innovation and system optimization. Demonstrated success in collaborating with stakeholders to align technical solutions with business objectives.`
+    }
+  ];
+};
+
 const prompt = `Job Title: {jobTitle}. Based on the job title, please generate concise 
 and complete summaries for my resume in JSON format with an array of objects containing 
-'experienceLevel' and 'summary' fields for: fresher, mid, and experienced levels. Each summary 
-should be limited to 3 to 4 lines, reflecting a personal tone and showcasing specific relevant 
-programming languages, technologies, frameworks, and methodologies without any placeholders or gaps. 
-Ensure that the summaries are engaging and tailored to highlight unique strengths, aspirations, 
-and contributions to collaborative projects, demonstrating a clear understanding of the role and 
-industry standards.`;
+'experienceLevel' and 'summary' fields for: fresher, mid, and experienced levels...`;
 
 const SummaryForm = (props: { handleNext: () => void }) => {
   const { handleNext } = props;
   const { resumeInfo, onUpdate } = useResumeContext();
-
   const { mutateAsync, isPending } = useUpdateDocument();
-
   const [loading, setLoading] = useState(false);
+  const [usedFallback, setUsedFallback] = useState(false);
   const [aiGeneratedSummaries, setAiGeneratedSummaries] = useState<SummaryType[]>([]);
 
   const handleChange = (e: { target: { value: string } }) => {
@@ -43,6 +61,55 @@ const SummaryForm = (props: { handleNext: () => void }) => {
       summary: value,
     };
     onUpdate(updatedInfo);
+  };
+
+  const GenerateSummaryFromAI = async () => {
+    const jobTitle = resumeInfo?.personalInfo?.jobTitle;
+    
+    if (!jobTitle) {
+      toast({
+        title: "Error",
+        description: "Please enter a job title first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    setUsedFallback(false);
+
+    try {
+      // Try AI generation first
+      const PROMPT = prompt.replace("{jobTitle}", jobTitle);
+      const result = await AIChatSession.sendMessage(PROMPT);
+      const responseText = await result.response.text();
+      const parsedResponse = JSON.parse(responseText);
+      
+      const summaries: SummaryType[] = Array.isArray(parsedResponse) 
+        ? parsedResponse 
+        : Object.entries(parsedResponse).map(([level, summary]) => ({
+            experienceLevel: level,
+            summary: summary as string
+          }));
+
+      setAiGeneratedSummaries(summaries);
+      
+    } catch (error) {
+      console.error('Error generating summary:', error);
+      
+      // If AI fails, use fallback templates
+      const fallbackTemplates = getFallbackTemplates(jobTitle);
+      setAiGeneratedSummaries(fallbackTemplates);
+      setUsedFallback(true);
+      
+      toast({
+        title: "Using Template Suggestions",
+        description: "AI service is currently unavailable. Showing template suggestions instead.",
+        variant: "default",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = useCallback(
@@ -78,35 +145,8 @@ const SummaryForm = (props: { handleNext: () => void }) => {
         }
       );
     },
-    [resumeInfo]
+    [resumeInfo, mutateAsync, handleNext]
   );
-
-  const GenerateSummaryFromAI = async () => {
-    try {
-      const jobTitle = resumeInfo?.personalInfo?.jobTitle;
-      if (!jobTitle) return;
-      setLoading(true);
-      const PROMPT = prompt.replace("{jobTitle}", jobTitle);
-      const result = await AIChatSession.sendMessage(PROMPT);
-      const responseText = await result.response.text();
-      const parsedResponse = JSON.parse(responseText);
-      
-      // Transform the response into the expected format
-      const summaries = Object.entries(parsedResponse).map(([level, summary]) => ({
-        experienceLevel: level,
-        summary: summary as string
-      }));
-      
-      setAiGeneratedSummaries(summaries);
-    } catch (error) {
-      toast({
-        title: "Failed to generate summary",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSelect = useCallback(
     (summary: string) => {
@@ -139,7 +179,11 @@ const SummaryForm = (props: { handleNext: () => void }) => {
               disabled={loading || isPending}
               onClick={GenerateSummaryFromAI}
             >
-              <Sparkles size="15px" className="text-purple-500" />
+              {loading ? (
+                <Loader size="15px" className="animate-spin mr-2" />
+              ) : (
+                <Sparkles size="15px" className="text-purple-500" />
+              )}
               Generate with AI
             </Button>
           </div>
@@ -152,23 +196,30 @@ const SummaryForm = (props: { handleNext: () => void }) => {
 
           {aiGeneratedSummaries.length > 0 && (
             <div>
-              <h5 className="font-semibold text-[15px] my-4">Suggestions</h5>
-              {aiGeneratedSummaries.map((item, index) => (
-                <Card
-                  key={index}
-                  className="my-4 bg-primary/5 shadow-none border-primary/30 cursor-pointer"
-                  onClick={() => handleSelect(item.summary)}
-                >
-                  <CardHeader className="py-2">
-                    <CardTitle className="font-semibold text-md capitalize">
-                      {item.experienceLevel}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-sm">
-                    <p>{item.summary}</p>
-                  </CardContent>
-                </Card>
-              ))}
+              <h5 className="font-semibold text-[15px] my-4 flex items-center gap-2">
+                {usedFallback && (
+                  <AlertCircle size="15px" className="text-yellow-500" />
+                )}
+                {usedFallback ? "Template Suggestions" : "AI Suggestions"}
+              </h5>
+              <div className="space-y-4">
+                {aiGeneratedSummaries.map((item, index) => (
+                  <Card
+                    key={index}
+                    className="bg-primary/5 shadow-none border-primary/30 cursor-pointer hover:bg-primary/10 transition-colors"
+                    onClick={() => handleSelect(item.summary)}
+                  >
+                    <CardHeader className="py-2">
+                      <CardTitle className="font-semibold text-md capitalize">
+                        {item.experienceLevel}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-sm">
+                      {item.summary}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
           )}
 
@@ -177,7 +228,7 @@ const SummaryForm = (props: { handleNext: () => void }) => {
             type="submit"
             disabled={isPending || loading || resumeInfo?.status === "archived"}
           >
-            {isPending && <Loader size="15px" className="animate-spin" />}
+            {isPending && <Loader size="15px" className="animate-spin mr-2" />}
             Save Changes
           </Button>
         </form>

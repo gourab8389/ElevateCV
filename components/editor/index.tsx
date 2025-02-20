@@ -35,13 +35,14 @@ const RichTextEditor = (props: {
   const { jobTitle, initialValue, onEditorChange } = props;
 
   const [loading, setLoading] = useState(false);
-  const [value, setValue] = useState(initialValue || "");
+  // Ensure initialValue is a string to prevent str.replace error
+  const [value, setValue] = useState(typeof initialValue === 'string' ? initialValue : '');
 
   const GenerateSummaryFromAI = async () => {
     try {
       if (!jobTitle) {
         toast({
-          title: "Must provide Job Postion",
+          title: "Must provide Job Position",
           variant: "destructive",
         });
         return;

@@ -30,10 +30,8 @@ const RichTextEditor = (props: {
 }) => {
   const { jobTitle, initialValue, onEditorChange } = props;
   
-  // Use a safer initialization approach
   const [safeValue, setSafeValue] = useState("");
   
-  // Safely process initialValue once on mount
   useEffect(() => {
     setSafeValue(ensureString(initialValue));
   }, [initialValue]);

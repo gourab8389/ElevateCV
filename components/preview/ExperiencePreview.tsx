@@ -58,7 +58,7 @@ const ExperiencePreview: FC<PropsType> = ({ resumeInfo, isLoading }) => {
             </div>
             <div
               style={{ fontSize: "13px" }}
-              className="exp-preview leading-[14.6px]"
+              className="exp-preview leading-[14.6px] text-black dark:text-white"
               dangerouslySetInnerHTML={{
                 __html: experience?.workSummary || "",
               }}

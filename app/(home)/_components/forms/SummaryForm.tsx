@@ -1,39 +1,43 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useResumeContext } from "@/context/resume-info-provider";
 import useUpdateDocument from "@/features/document/use-update-document";
 import { toast } from "@/hooks/use-toast";
-import { AIChatSession } from "@/lib/google-ai-model";
 import { generateThumbnail } from "@/lib/helper";
 import { ResumeDataType } from "@/types/resume.type";
-import { Loader, Sparkles } from "lucide-react";
-import React, { useCallback, useState } from "react";
+import { Loader } from "lucide-react";
+import React, { useCallback } from "react";
 
-interface SummaryType {
-  experienceLevel: string;
-  summary: string;
-}
+// Template summaries based on experience level and job title
+const getTemplateSummaries = (jobTitle: string): { level: string; summary: string }[] => {
+  const titleLower = jobTitle.toLowerCase();
+  const role = titleLower.includes('developer') ? 'developer' :
+               titleLower.includes('engineer') ? 'engineer' :
+               titleLower.includes('designer') ? 'designer' :
+               'professional';
 
-const prompt = `Job Title: {jobTitle}. Based on the job title, please generate concise 
-and complete summaries for my resume in JSON format with an array of objects containing 
-'experienceLevel' and 'summary' fields for: fresher, mid, and experienced levels. Each summary 
-should be limited to 3 to 4 lines, reflecting a personal tone and showcasing specific relevant 
-programming languages, technologies, frameworks, and methodologies without any placeholders or gaps. 
-Ensure that the summaries are engaging and tailored to highlight unique strengths, aspirations, 
-and contributions to collaborative projects, demonstrating a clear understanding of the role and 
-industry standards.`;
+  return [
+    {
+      level: "Freshers Level",
+      summary: `Recent graduate with a strong foundation in ${role} fundamentals and hands-on project experience. Passionate about learning new technologies and contributing to innovative solutions. Demonstrated ability to quickly adapt to new environments and work collaboratively in team settings. Seeking an opportunity to grow and make meaningful contributions while developing expertise in ${jobTitle}.`
+    },
+    {
+      level: "Mid Level",
+      summary: `Experienced ${role} with 3-5 years of proven expertise in delivering high-quality solutions. Strong track record of collaborating with cross-functional teams to implement robust solutions. Proficient in industry-standard tools and methodologies, with a focus on code quality and best practices. Demonstrated ability to mentor junior team members while contributing to complex projects.`
+    },
+    {
+      level: "Senior Level",
+      summary: `Seasoned ${role} with 5+ years of extensive experience in architecting and delivering enterprise-scale solutions. Proven leadership in driving technical initiatives, mentoring teams, and implementing best practices. Strong focus on innovation and system optimization. Demonstrated success in collaborating with stakeholders to align technical solutions with business objectives.`
+    }
+  ];
+};
 
 const SummaryForm = (props: { handleNext: () => void }) => {
   const { handleNext } = props;
   const { resumeInfo, onUpdate } = useResumeContext();
-
   const { mutateAsync, isPending } = useUpdateDocument();
-
-  const [loading, setLoading] = useState(false);
-  const [aiGeneratedSummaries, setAiGeneratedSummaries] = useState<SummaryType[]>([]);
 
   const handleChange = (e: { target: { value: string } }) => {
     const { value } = e.target;
@@ -78,49 +82,22 @@ const SummaryForm = (props: { handleNext: () => void }) => {
         }
       );
     },
-    [resumeInfo]
+    [resumeInfo, mutateAsync, handleNext]
   );
 
-  const GenerateSummaryFromAI = async () => {
-    try {
-      const jobTitle = resumeInfo?.personalInfo?.jobTitle;
-      if (!jobTitle) return;
-      setLoading(true);
-      const PROMPT = prompt.replace("{jobTitle}", jobTitle);
-      const result = await AIChatSession.sendMessage(PROMPT);
-      const responseText = await result.response.text();
-      const parsedResponse = JSON.parse(responseText);
-      
-      // Transform the response into the expected format
-      const summaries = Object.entries(parsedResponse).map(([level, summary]) => ({
-        experienceLevel: level,
-        summary: summary as string
-      }));
-      
-      setAiGeneratedSummaries(summaries);
-    } catch (error) {
-      toast({
-        title: "Failed to generate summary",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
+  const applyTemplate = (summary: string) => {
+    if (!resumeInfo) return;
+    const resumeDataInfo = resumeInfo as ResumeDataType;
+    const updatedInfo = {
+      ...resumeDataInfo,
+      summary: summary,
+    };
+    onUpdate(updatedInfo);
   };
 
-  const handleSelect = useCallback(
-    (summary: string) => {
-      if (!resumeInfo) return;
-      const resumeDataInfo = resumeInfo as ResumeDataType;
-      const updatedInfo = {
-        ...resumeDataInfo,
-        summary: summary,
-      };
-      onUpdate(updatedInfo);
-      setAiGeneratedSummaries([]);
-    },
-    [onUpdate, resumeInfo]
-  );
+  const templates = resumeInfo?.personalInfo?.jobTitle 
+    ? getTemplateSummaries(resumeInfo.personalInfo.jobTitle)
+    : [];
 
   return (
     <div>
@@ -129,55 +106,40 @@ const SummaryForm = (props: { handleNext: () => void }) => {
         <p className="text-sm">Add summary for your resume</p>
       </div>
       <div>
-        <form onSubmit={handleSubmit}>
-          <div className="flex items-end justify-between">
+        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+          <div>
             <Label>Add Summary</Label>
-            <Button
-              variant="outline"
-              type="button"
-              className="gap-1"
-              disabled={loading || isPending}
-              onClick={GenerateSummaryFromAI}
-            >
-              <Sparkles size="15px" className="text-purple-500" />
-              Generate with AI
-            </Button>
+            <Textarea
+              className="mt-2 min-h-36"
+              required
+              value={resumeInfo?.summary || ""}
+              onChange={handleChange}
+            />
           </div>
-          <Textarea
-            className="mt-5 min-h-36"
-            required
-            value={resumeInfo?.summary || ""}
-            onChange={handleChange}
-          />
 
-          {aiGeneratedSummaries.length > 0 && (
+          {templates.length > 0 && (
             <div>
-              <h5 className="font-semibold text-[15px] my-4">Suggestions</h5>
-              {aiGeneratedSummaries.map((item, index) => (
-                <Card
-                  key={index}
-                  className="my-4 bg-primary/5 shadow-none border-primary/30 cursor-pointer"
-                  onClick={() => handleSelect(item.summary)}
-                >
-                  <CardHeader className="py-2">
-                    <CardTitle className="font-semibold text-md capitalize">
-                      {item.experienceLevel}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="text-sm">
-                    <p>{item.summary}</p>
-                  </CardContent>
-                </Card>
-              ))}
+              <h5 className="font-semibold text-[15px] mb-2">Template Suggestions</h5>
+              <div className="space-y-2">
+                {templates.map((template, index) => (
+                  <div
+                    key={index}
+                    className="p-4 border rounded-md cursor-pointer hover:bg-neutral-600 transition-colors"
+                    onClick={() => applyTemplate(template.summary)}
+                  >
+                    <h6 className="font-medium mb-1">{template.level}</h6>
+                    <p className="text-sm text-black dark:text-white">{template.summary}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
           <Button
-            className="mt-4"
             type="submit"
-            disabled={isPending || loading || resumeInfo?.status === "archived"}
+            disabled={isPending || resumeInfo?.status === "archived"}
           >
-            {isPending && <Loader size="15px" className="animate-spin" />}
+            {isPending && <Loader size="15px" className="animate-spin mr-2" />}
             Save Changes
           </Button>
         </form>

@@ -40,7 +40,7 @@ export const documentRelations = relations(documentTable, ({ one, many }) => {
     personalInfo: one(personalInfoTable),
     experiences: many(experienceTable),
     educations: many(educationTable),
-    skills: many(skillsTable),
+    skills: many(skillsTable), 
   };
 });
 

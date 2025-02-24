@@ -9,7 +9,7 @@ const Logo = (
     { className }: LogoProps
 ) => {
   return (
-    <Link href={"/dashboard"} className={cn("text-blue-600 cursor-pointer text-3xl font-bold", className)}>
+    <Link href={"/"} className={cn("text-blue-600 cursor-pointer text-3xl font-bold", className)}>
         Elevate<span className="text-blue-500">CV</span>
     </Link>
   )

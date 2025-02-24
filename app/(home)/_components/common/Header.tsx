@@ -28,7 +28,7 @@ const Header = () => {
     >
       <div
         className="w-full mx-auto max-w-7xl
-        py-2 px-5 flex items-center justify-between
+        py-5 px-5 flex items-center justify-between
         "
       >
         <div
@@ -37,7 +37,7 @@ const Header = () => {
             "
         >
           <div>
-            <Logo/>
+            <Logo />
           </div>
 
           {isAuthenticated && user ? (
